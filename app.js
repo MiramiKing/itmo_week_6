@@ -8,9 +8,10 @@ const headers = {
 }
 
 export default function initApp(express, bodyParser, fs, crypto, http) {
-    const app = express();
+    const app = express()
     app
         .use(bodyParser.urlencoded({extended:true}))
+        //.use(cors())
         .all('/login/', r => {
             r.res.set(headers).send(login)
         })
@@ -41,5 +42,5 @@ export default function initApp(express, bodyParser, fs, crypto, http) {
         })
         .all('*', r => r.res.send(login))
         .use(({res:r})=>r.status(404).send(login))
-    return app;
+    return app
 }
