@@ -1,10 +1,12 @@
-import initApp from './app.js'
-import fs from 'fs'
-import express from 'express'
-import bodyParser from "body-parser"
-import crypto from 'crypto'
-import http from 'http'
+import express from 'express';
+import bodyParser from 'body-parser'
+import crypto from 'crypto';
+import http from 'http';
+import { createReadStream } from 'fs';
 
-const app = initApp(express, bodyParser, fs, crypto, http)
-const PORT = process.env.PORT || 5000
-app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
+
+import appSrc from './app.js';
+
+const app = appSrc(express, bodyParser, createReadStream, crypto, http);
+
+app.listen(process.env.PORT ?? 4321);
