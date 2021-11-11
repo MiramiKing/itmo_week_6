@@ -1,46 +1,89 @@
-import cors from 'cors'
+export default (express, bodyParser, createReadStream, crypto, http) => {
 
-const login = 'itmo337560'
+    const author = 'itmo337560';
 
-const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE'
-}
+    const CORS = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE',
+        'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers'
+    };
 
-export default function initApp(express, bodyParser, fs, crypto, http) {
-    const app = express()
+    const app = express();
+
+    const parseUrlEncodedBody = bodyParser.urlencoded({ extended: false })
+    app.use(parseUrlEncodedBody)
+
     app
-        .use(bodyParser.urlencoded({extended: true}))
-        .all('/login/', r => {
-            r.res.set(headers).send(login)
+        .use((req, res, next) => {
+            res
+                .status(200)
+                .set(CORS)
+            next();
         })
-        .all('/code/', r => {
-            r.res.set(headers)
-            fs.readFile(import.meta.url.substring(7), (err, data) => {
-                if (err) throw err
-                r.res.end(data)
-            })
+
+        .get('/login', (req, res) => {
+            res
+                .set({'Content-Type': 'text/html; charset=utf-8'})
+                .send(author);
+
         })
-        .all('/sha1/:input/', r => {
-            r.res.set(headers).send(crypto.createHash('sha1').update(r.params.input).digest('hex'))
+
+        .get('/code', (req, res) => {
+            let filePath = import.meta.url.replace(/^file:\/+/, '')
+
+            if (! filePath.includes(':')) {
+                filePath = `/${filePath}`
+            }
+
+            createReadStream(filePath).pipe(res)
         })
-        .get('/req/', (req, res) => {
-            res.set(headers)
-            let data = ''
-            http.get(req.query.addr, async function (response) {
-                await response.on('data', function (chunk) {
-                    data += chunk
-                }).on('end', () => {
+
+        .get('/sha1/:input', ({ params }, res) => {
+            const { input } = params
+
+            const hash = crypto.createHash('sha1').update(input).digest('hex')
+
+            res.send(hash);
+        })
+
+
+        .get('/req/', ({ query }, res) => {
+            const { addr } = query
+
+            http.get(addr, httpRes => {
+                httpRes.setEncoding('utf8')
+
+                let data = ''
+
+                httpRes.on('data', chunk => { data += chunk })
+
+                httpRes.on('end', () => {
+                    res.send(data)
                 })
-                res.send(data)
             })
         })
-        .post('/req/', r => {
-            r.res.set(headers)
-            const {addr} = req.body
-            r.res.send(addr)
+
+        .post('/req/', ({ body }, res) => {
+            const { addr } = body
+
+            http.get(addr, httpRes => {
+                httpRes.setEncoding('utf8')
+
+                let data = ''
+
+                httpRes.on('data', chunk => { data += chunk })
+
+                httpRes.on('end', () => {
+                    res.send(data)
+                })
+            })
         })
-        .all('*', r => r.res.send(login))
-        .use(({res: r}) => r.status(404).send(login))
+
+
+        .all('*', (req, res) => {
+            res.send(author)
+        });
+
     return app
+
 }
