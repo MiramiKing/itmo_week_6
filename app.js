@@ -10,7 +10,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
 
     const app = express();
 
-
+    app.set("view engine", "pug");
     const parseUrlEncodedBody = bodyParser.urlencoded({extended: false})
     app.use(bodyParser.json());
     app.use(parseUrlEncodedBody)
