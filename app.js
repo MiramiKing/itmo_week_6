@@ -11,8 +11,10 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
 
     const app = express();
 
+
     const parseUrlEncodedBody = bodyParser.urlencoded({extended: false})
     app.use(parseUrlEncodedBody)
+
 
     app
         .use((req, res, next) => {
@@ -97,7 +99,8 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
                 console.log(e.codeName)
             }
         })
-
+    app.use(bodyParser.json());
+    app.set('view engine','pug')
         .get('/wordpress/wp-json/wp/v2/posts/1', (req, res) => {
             res.json({
                 id: 1,
@@ -108,13 +111,11 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
         .post('/render/', (req, res) => {
             const {random2, random3} = req.body
 
-            http.get(req.query.addr, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE'
-                }
-            }, (resFrom) => {
-                const {statusCode} = resFrom;
+            http.get( req.query.addr,{headers: {
+                    'Access-Control-Allow-Origin':'*',
+                    'Access-Control-Allow-Methods':'GET,POST,PUT,PATCH,OPTIONS,DELETE'
+                }}, (resFrom) => {
+                const { statusCode } = resFrom;
                 let error;
 
                 if (statusCode !== 200) {
@@ -126,9 +127,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
 
                 resFrom.setEncoding('utf8');
                 let rawData = '';
-                resFrom.on('data', (chunk) => {
-                    rawData += chunk;
-                });
+                resFrom.on('data', (chunk) => { rawData += chunk; });
                 resFrom.on('end', () => {
                     try {
                         writeFileSync('views/template.pug', rawData, function (err) {
