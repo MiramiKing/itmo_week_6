@@ -1,6 +1,5 @@
-import {writeFileSync} from "file-system";
 
-export default (express, bodyParser, createReadStream, crypto, http, User, m, puppeteer) => {
+export default (express, bodyParser, createReadStream,writeFileSync, crypto, http, User, m, puppeteer) => {
 
     const author = 'itmo337560';
 
