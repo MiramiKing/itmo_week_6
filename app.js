@@ -13,7 +13,9 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
 
 
     const parseUrlEncodedBody = bodyParser.urlencoded({extended: false})
+    app.use(bodyParser.json());
     app.use(parseUrlEncodedBody)
+
 
 
     app
@@ -99,7 +101,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
                 console.log(e.codeName)
             }
         })
-    app.use(bodyParser.json());
+
     app.set('view engine','pug')
         .get('/wordpress/wp-json/wp/v2/posts/1', (req, res) => {
             res.json({
