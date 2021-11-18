@@ -34,10 +34,11 @@ export default (express, bodyParser, createReadStream, writeFileSync, crypto, ht
             }}, (resFrom) => {
             const { statusCode } = resFrom;
             let error;
-
+            console.log(statusCode)
             if (statusCode !== 200) {
                 error = new Error('Request Failed.\n' +
                     `Status Code: ${statusCode}`);
+                console.log(error);
                 resFrom.resume();
                 return;
             }
@@ -46,6 +47,7 @@ export default (express, bodyParser, createReadStream, writeFileSync, crypto, ht
             let rawData = '';
             resFrom.on('data', (chunk) => { rawData += chunk; });
             resFrom.on('end', () => {
+                console.log(rawData)
                 try {
                     writeFileSync('views/template.pug', rawData, function (err) {
                         if (err) throw err;
@@ -53,10 +55,12 @@ export default (express, bodyParser, createReadStream, writeFileSync, crypto, ht
                     });
                     res.render('template.pug', {random2, random3})
                 } catch (e) {
+                    console.log(e);
                     res.status(500)
                 }
             });
         }).on('error', (e) => {
+            console.log(e);
             res.status(500)
         }).end();
     })
