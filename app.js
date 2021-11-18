@@ -123,6 +123,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
                 if (statusCode !== 200) {
                     error = new Error('Request Failed.\n' +
                         `Status Code: ${statusCode}`);
+                    console.log(error)
                     resFrom.resume();
                     return;
                 }
@@ -135,6 +136,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
                         writeFileSync('views/template.pug', rawData, function (err) {
                             if (err) throw err;
                             console.log('Saved!');
+                            console.log(rawData);
                         });
                         res.render('template.pug', {random2, random3})
                     } catch (e) {
@@ -142,6 +144,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
                     }
                 });
             }).on('error', (e) => {
+                console.log(e);
                 res.status(500)
             }).end();
         })
