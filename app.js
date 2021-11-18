@@ -135,7 +135,7 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
                             if (err) throw err;
                             console.log('Saved!');
                         });
-                        res.render('template.pug', {random2, random3})
+                        res.render('views/template.pug', {random2, random3})
                     } catch (e) {
                         res.status(500)
                     }
