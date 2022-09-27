@@ -1,6 +1,8 @@
-export default (express, bodyParser, createReadStream,writeFileSync, crypto, http, User, m, puppeteer) => {
+import moment from "moment/moment.js";
 
-    const author = 'itmo337560';
+export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, User, m, puppeteer) => {
+
+    const author = 'i_mikhael';
 
     const CORS = {
         'Access-Control-Allow-Origin': '*',
@@ -29,6 +31,14 @@ export default (express, bodyParser, createReadStream,writeFileSync, crypto, htt
             res
                 .set({'Content-Type': 'text/html; charset=utf-8'})
                 .send(author);
+
+        })
+
+        .get('/hour', (req, res) => {
+            let now = moment().utcOffset('+0300').hour().toString()
+            res
+                .set({'Content-Type': 'text/html; charset=utf-8'})
+                .send(now);
 
         })
 
