@@ -1,6 +1,6 @@
 import moment from "moment/moment.js";
 
-export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, User, m, puppeteer) => {
+export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer) => {
 
     const author = 'i_mikhael';
 
@@ -40,6 +40,24 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
                 .set({'Content-Type': 'text/html; charset=utf-8'})
                 .send(now);
 
+        })
+
+        .get('/id/:input', async ({params}, res) => {
+            const {input} = params
+
+            https.get(`https://nd.kodaktor.ru/users/${input}`, httpRes => {
+                httpRes.setEncoding('utf8')
+
+                let data = ''
+
+                httpRes.on('data', chunk => {
+                    data += chunk
+                })
+
+                httpRes.on('end', () => {
+                    res.send(data)
+                })
+            })
         })
 
         .get('/code', (req, res) => {
