@@ -24,6 +24,7 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
             res
                 .status(200)
                 .set(CORS)
+                .set({'X-Author': author})
             next();
         })
 
