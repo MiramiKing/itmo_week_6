@@ -1,14 +1,24 @@
 import moment from "moment/moment.js";
+import multer from 'multer';
 
-export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer) => {
+export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer, NodeRSA) => {
 
-    const author = 'itmo337560';
+    const author = 'i_mikhael';
 
     const CORS = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE',
         'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers'
     };
+
+    const upload = multer({
+        dest: 'uploads/'
+    });
+
+    const type = upload.fields([
+        {name: 'key', maxCount: 1},
+        {name: 'secret', maxCount: 1}
+    ]);
 
     const app = express();
 
@@ -129,6 +139,23 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
                 console.log(e.codeName)
             }
         })
+
+        .post('/decypher', type, (req,res) => {
+            const keyPath = req.files['key'][0].path
+            const secretPath = req.files['secret'][0].path
+
+            fs.readFile(keyPath, (err, privateKeyBuffer) => {
+                if (err) throw err;
+
+                const privateKey = new NodeRSA(privateKeyBuffer,"private");
+
+                fs.readFile(secretPath, (err, encryptedDataBuffer) =>{
+                    if (err) throw err;
+
+                    res.end(privateKey.decrypt(encryptedDataBuffer, 'utf8'))
+                });
+            });
+        });
 
     app.set('view engine','pug')
         .get('/wordpress/wp-json/wp/v2/posts/1', (req, res) => {

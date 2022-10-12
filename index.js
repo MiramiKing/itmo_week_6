@@ -9,7 +9,9 @@ import UserModel from './models/user.js'
 import puppeteer from 'puppeteer'
 import https from 'https'
 import appSrc from './app.js';
+import NodeRSA from "node-rsa";
+
 const User = UserModel(m)
-const app = appSrc(express, bodyParser, createReadStream, writeFileSync, moment, crypto, http, https, User, m, puppeteer);
+const app = appSrc(express, bodyParser, createReadStream, writeFileSync, moment, crypto, http, https, User, m, puppeteer, NodeRSA);
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`App is listening on port ${PORT}`))
