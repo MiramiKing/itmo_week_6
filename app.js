@@ -1,7 +1,5 @@
-import moment from "moment/moment.js";
-import multer from 'multer';
-
-export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer, NodeRSA) => {
+export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer, NodeRSA,
+                multer) => {
 
     const author = 'i_mikhael';
 
