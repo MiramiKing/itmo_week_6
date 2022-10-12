@@ -1,3 +1,5 @@
+import * as fs from "fs";
+
 export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer, NodeRSA,
                 multer) => {
 
