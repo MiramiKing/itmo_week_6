@@ -1,7 +1,7 @@
 import * as fs from "fs";
 
-export default (express, bodyParser, createReadStream,writeFileSync,moment, crypto, http, https, User, m, puppeteer, NodeRSA,
-                multer) => {
+export default (express, bodyParser, createReadStream, writeFileSync, moment, crypto, http, https, User, m, puppeteer, NodeRSA,
+                multer, sizeOf, sharp) => {
 
     const author = 'i_mikhael';
 
@@ -26,7 +26,6 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
     const parseUrlEncodedBody = bodyParser.urlencoded({extended: false})
     app.use(bodyParser.json());
     app.use(parseUrlEncodedBody)
-
 
 
     app
@@ -124,6 +123,25 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
             })
         })
 
+        .post('/size2json', upload.single("image"), async (r) => {
+            const tmpPath = r.file.path;
+            sizeOf(tmpPath, function (err, dimensions) {
+                r.res.send({
+                    width: dimensions.width,
+                    height: dimensions.height,
+                })
+            })
+        })
+
+        .get("makeimage?", (r) => {
+            const width = parseInt(r.query.width);
+            const height = parseInt(r.query.height);
+            sharp("./img/ALX_ICON.png").resize(width, height).toFile("./img/output.png",
+                (err, info) => {
+                    r.res.download("./img/output.png");
+                });
+        })
+
         .post('/insert/', async (req, res) => {
             const {login, password, URL} = req.body
             let newUser = new User({login, password})
@@ -140,16 +158,16 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
             }
         })
 
-        .post('/decypher', type, (req,res) => {
+        .post('/decypher', type, (req, res) => {
             const keyPath = req.files['key'][0].path
             const secretPath = req.files['secret'][0].path
 
             fs.readFile(keyPath, (err, privateKeyBuffer) => {
                 if (err) throw err;
 
-                const privateKey = new NodeRSA(privateKeyBuffer,"private");
+                const privateKey = new NodeRSA(privateKeyBuffer, "private");
 
-                fs.readFile(secretPath, (err, encryptedDataBuffer) =>{
+                fs.readFile(secretPath, (err, encryptedDataBuffer) => {
                     if (err) throw err;
 
                     res.end(privateKey.decrypt(encryptedDataBuffer, 'utf8'))
@@ -157,7 +175,8 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
             });
         });
 
-    app.set('view engine','pug')
+
+    app.set('view engine', 'pug')
         .get('/wordpress/wp-json/wp/v2/posts/1', (req, res) => {
             res.json({
                 id: 1,
@@ -168,11 +187,13 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
         .post('/render/', (req, res) => {
             const {random2, random3} = req.body
 
-            http.get( req.query.addr,{headers: {
-                    'Access-Control-Allow-Origin':'*',
-                    'Access-Control-Allow-Methods':'GET,POST,PUT,PATCH,OPTIONS,DELETE'
-                }}, (resFrom) => {
-                const { statusCode } = resFrom;
+            http.get(req.query.addr, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE'
+                }
+            }, (resFrom) => {
+                const {statusCode} = resFrom;
                 let error;
 
                 if (statusCode !== 200) {
@@ -185,7 +206,9 @@ export default (express, bodyParser, createReadStream,writeFileSync,moment, cryp
 
                 resFrom.setEncoding('utf8');
                 let rawData = '';
-                resFrom.on('data', (chunk) => { rawData += chunk; });
+                resFrom.on('data', (chunk) => {
+                    rawData += chunk;
+                });
                 resFrom.on('end', () => {
                     console.log(rawData);
                     try {
