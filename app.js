@@ -3,7 +3,7 @@ import * as fs from "fs";
 export default (express, bodyParser, createReadStream, writeFileSync, moment, crypto, http, https, User, m, puppeteer, NodeRSA,
                 multer, sizeOf, sharp) => {
 
-    const author = 'i_mikhael';
+    const author = 'itmo337560';
 
     const CORS = {
         'Access-Control-Allow-Origin': '*',
