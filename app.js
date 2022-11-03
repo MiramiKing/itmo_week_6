@@ -53,7 +53,7 @@ export default (express, bodyParser, createReadStream, writeFileSync, moment, cr
         })
 
         .get('/sample', (req, res) => {
-            res.end('function task(x) { return x*this**2; }');
+            res.send('function task(x) { return x*this**2; }');
         })
 
         .get('/id/:input', async ({params}, res) => {
