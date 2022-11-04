@@ -149,7 +149,7 @@ export default (express, bodyParser, createReadStream, writeFileSync, moment, cr
             })
         })
 
-        .post('result4',(req, res) => {
+        .post('/result4/',(req, res) => {
             let body = ''
 
             req.on('data' , chunk => {
