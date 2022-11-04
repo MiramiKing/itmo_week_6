@@ -63,7 +63,8 @@ export default (express, bodyParser, createReadStream, writeFileSync, moment, cr
         })
 
         .get('/fetch',(req,res) =>{
-            res.send('<!DOCTYPE html>\n' +
+            res.set({'Content-Type': 'text/html; charset=utf-8'})
+                .send('<!DOCTYPE html>\n' +
                 '<html lang="ru">\n' +
                 '  <head>\n' +
                 '    <meta charset="UTF-8" />\n' +
