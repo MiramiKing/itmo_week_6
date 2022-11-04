@@ -56,6 +56,43 @@ export default (express, bodyParser, createReadStream, writeFileSync, moment, cr
             res.send('function task(x) { return x*this**2; }');
         })
 
+        .get('/promise',(req,res) =>{
+            res.send('function task(x){\n' +
+                '    return new Promise ((res, rej) => x < 18  ? res(\'yes\') : rej(\'no\'));\n' +
+                '  }')
+        })
+
+        .get('/fetch',(req,res) =>{
+            res.send('<!DOCTYPE html>\n' +
+                '<html lang="ru">\n' +
+                '  <head>\n' +
+                '    <meta charset="UTF-8" />\n' +
+                '    <title>ITMOUniversity-NODEJS-week3</title>\n' +
+                '  </head>\n' +
+                '\n' +
+                '  <body>\n' +
+                '    <form id="form" action="#">\n' +
+                '      <input id="inp" type="url" placeholder="Input URL" />\n' +
+                '      <input id="bt" type="submit" value="Send" onClick="sendURL();" />\n' +
+                '    </form>\n' +
+                '\n' +
+                '    <script>\n' +
+                '      /*Получение элемента c указанными id:*/\n' +
+                '      const InputField = document.getElementById("inp");\n' +
+                '      function sendURL() {\n' +
+                '        /*У каждого элемента <input> есть атрибут value, который задает значение поля ввода по умолчанию.*/\n' +
+                '        /*Вызов функции fetch(), в качестве одного аргумента передается адрес страницы из поля ввода:*/\n' +
+                '        fetch(InputField.value)\n' +
+                '          /*В объекте response, который вернула функция Fetch, вызывается метод then() и в него передается результат ответа, который затем декодируется в текст:*/\n' +
+                '          .then((response) => response.text())\n' +
+                '          /*В атрибут value поля ввода inp вместо того значения, что в нем было ранее, помещается декодированный текст:*/\n' +
+                '          .then((data) => (InputField.value = data));\n' +
+                '      }\n' +
+                '    </script>\n' +
+                '  </body>\n' +
+                '</html>')
+        })
+
         .get('/id/:input', async ({params}, res) => {
             const {input} = params
 
