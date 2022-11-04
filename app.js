@@ -8,7 +8,7 @@ export default (express, bodyParser, createReadStream, writeFileSync, moment, cr
     const CORS = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS,DELETE',
-        'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers'
+        'Access-Control-Allow-Headers': 'x-test, Content-Type, Access-Control-Allow-Headers'
     };
 
     const upload = multer({
