@@ -149,20 +149,23 @@ export default (express, bodyParser, createReadStream, writeFileSync, moment, cr
             })
         })
 
-        .post('/req/', ({body}, res) => {
-            const {addr} = body
+        .post('result4',(req, res) => {
+            let body = ''
 
-            http.get(addr, httpRes => {
-                httpRes.setEncoding('utf8')
+            req.on('data' , chunk => {
+                body += chunk.toString();
+            });
 
-                let data = ''
+            req.on('end', () => {
+                let result = {
+                    'message': author,
+                    'x-result': req?.headers?.['x-test'],
+                    'x-body': body
+                }
 
-                httpRes.on('data', chunk => {
-                    data += chunk
-                }).on('end', () => {
-                    res.send(data)
-                })
-            })
+                res.writeHead(200,{...CORS, 'Content-Type': 'application/json'})
+                res.end(JSON.stringify(result))
+            });
         })
 
         .post('/size2json', upload.single("image"), async (r) => {
